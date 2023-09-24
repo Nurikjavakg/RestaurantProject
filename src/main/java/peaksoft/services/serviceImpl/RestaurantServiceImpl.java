@@ -19,8 +19,6 @@ import peaksoft.repository.RestaurantRepository;
 import peaksoft.repository.UserRepository;
 import peaksoft.services.RestaurantService;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -38,10 +36,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setLocation(restaurantRequest.getLocation());
         restaurant.setRestType(restaurantRequest.getRestType());
         restaurant.setService(restaurantRequest.getService());
-
-        List<User> users = restaurant.getUsers();
-        int numberOfEmployees = users.size();
-        restaurant.setNumberOfEmployees(numberOfEmployees);
 
         restaurantRepository.save(restaurant);
 
@@ -64,7 +58,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setNumberOfEmployees(numberOfEmployees);
         restaurant.getUsers().add(user);
         user.setRestaurant(restaurant);
-        userRepository.save(user);
         restaurantRepository.save(restaurant);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
@@ -83,12 +76,52 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public SimpleResponse updateProduct(Long restaurantId, RestaurantRequest restaurantRequest) {
-        return null;
-    }
+    public SimpleResponse updateRestaurant(Long restaurantId, RestaurantRequest restaurantRequest) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new AccessDenied("Authentication required to update restaurant!!!");
+            }
+            if (authentication.getAuthorities().stream()
+                    .anyMatch(role -> role.getAuthority().equals(Role.ADMIN))) {
+                throw new AccessDenied("You do not have permission to update a restaurant.");
+            }
 
-    @Override
-    public SimpleResponse deleteProduct(Long restaurantId) {
-        return null;
-    }
+            Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                    .orElseThrow(() -> new NotFoundException("Restaurant with id:" + restaurantId + " not found"));
+
+            restaurant.setName(restaurantRequest.getName());
+            restaurant.setLocation(restaurantRequest.getLocation());
+            restaurant.setRestType(restaurantRequest.getRestType());
+            restaurant.setService(restaurantRequest.getService());
+
+            log.info("Restaurant with id:" + restaurantId + " updated...");
+
+            return SimpleResponse.builder()
+                    .httpStatus(HttpStatus.OK)
+                    .message(String.format("Restaurant with id: %s successfully updated", restaurantId))
+                    .build();
+        }
+
+
+        @Override
+    public SimpleResponse deleteRestaurant(Long restaurantId) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new AccessDenied("Authentication required to delete a restaurant !!!");
+            }
+
+            Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                    .orElseThrow(() -> {
+                        log.info("Restaurant with id:" + restaurantId + " not found...");
+                        return new NotFoundException("Restaurant with id:" + restaurantId + " not found...");
+                    });
+
+            restaurantRepository.delete(restaurant);
+
+            log.info("Restaurant is deleted with id:" + restaurantId + "...");
+            return SimpleResponse.builder()
+                    .httpStatus(HttpStatus.OK)
+                    .message("Restaurant with id:" + restaurantId + " has been deleted.")
+                    .build();
+        }
 }

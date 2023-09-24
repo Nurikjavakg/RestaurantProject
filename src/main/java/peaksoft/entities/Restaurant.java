@@ -22,7 +22,7 @@ public class Restaurant {
     private String name;
     private String location;
     private String restType;
-    private int numberOfEmployees = 0;
+    private int numberOfEmployees;
     private int service;
     @OneToMany(mappedBy = "restaurant", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE})
     private List<User> users;

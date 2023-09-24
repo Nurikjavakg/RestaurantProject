@@ -5,7 +5,7 @@ import peaksoft.dto.user.SignInRequest;
 import peaksoft.dto.user.SignUpRequest;
 import peaksoft.dto.user.UserResponseWithToken;
 
-public interface AuthenticationServcie {
+public interface AuthenticationServiceForUser {
     SimpleResponse signUp(SignUpRequest request);
     UserResponseWithToken login(SignInRequest signInRequest);
 

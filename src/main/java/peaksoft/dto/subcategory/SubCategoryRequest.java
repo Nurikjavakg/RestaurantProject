@@ -1,10 +1,10 @@
-package peaksoft.dto.category;
+package peaksoft.dto.subcategory;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CategoryRequest {
+public class SubCategoryRequest {
     private String name;
 }

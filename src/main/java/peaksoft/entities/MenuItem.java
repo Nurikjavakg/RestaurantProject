@@ -1,6 +1,7 @@
 package peaksoft.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class MenuItem {
     private Long id;
     private String name;
     private String image;
+    @Positive
     private BigDecimal price;
     private String description;
     private Boolean isVegetarian;
@@ -31,8 +33,8 @@ public class MenuItem {
     private List<Cheque> chequeList;
     @OneToOne
     private StopList stopList;
-    @OneToMany(mappedBy = "menu",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE})
-    private List<SubCategory>subCategories;
+    @ManyToOne (cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    private SubCategory subCategory;
 
 
 }

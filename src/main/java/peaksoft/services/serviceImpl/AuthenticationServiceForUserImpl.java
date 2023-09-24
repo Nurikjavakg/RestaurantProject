@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.config.JwtService;
@@ -18,7 +17,7 @@ import peaksoft.enums.Role;
 import peaksoft.exceptions.*;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.repository.UserRepository;
-import peaksoft.services.AuthenticationServcie;
+import peaksoft.services.AuthenticationServiceForUser;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -26,18 +25,17 @@ import java.time.Period;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthenticationServiceImpl implements AuthenticationServcie {
+public class AuthenticationServiceForUserImpl implements AuthenticationServiceForUser {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
     private final JwtService jwtService;
-    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public SimpleResponse signUp(SignUpRequest request) {
-        Restaurant restaurant = restaurantRepository.findRestaurantById(1L).orElse(null);
-
-        if(restaurant.getNumberOfEmployees() == 6) throw new NotVacanciesException("Unfortunately we have not vacancies!");
+        Restaurant restaurant = restaurantRepository.findRestaurantById(2L).orElse(null);
+        if (restaurant.getNumberOfEmployees() == 4)
+            throw new NotVacanciesException("Unfortunately we have not vacancies!");
 
         User userEmail = userRepository.findByEmail(request.getEmail());
         if (userEmail != null) {
@@ -51,18 +49,14 @@ public class AuthenticationServiceImpl implements AuthenticationServcie {
 
         int age = Period.between(dob, currentDate).getYears();
         if (request.getRole().equals(Role.WAITER)) {
-            Long waiterCount = userRepository.chefCount(Role.WAITER);
-            if (waiterCount > 13) {
-                throw new AccessDenied("You can save only 13 chef");
-            }
-            if (age < 18 ||age > 30) {
+            if (age < 18 || age > 30) {
                 user.setDateOfBirth(request.getDateOfBirth());
                 throw new InvalidAgeException("Waiter age must be between 18 and 30 !");
             }
             user.setEmail(request.getEmail());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setExperience(request.getExperience());
-            if(request.getExperience() < 1) {
+            if (request.getExperience() < 1) {
                 throw new InvalidExperience("The waiter must have more than 1 years of experience");
             }
             if (Role.WAITER.equals(request.getRole())) {
@@ -73,19 +67,12 @@ public class AuthenticationServiceImpl implements AuthenticationServcie {
             }
 
 
-
-
         } else if (Role.CHEF.equals(request.getRole())) {
-            Long chefCount = userRepository.chefCount(Role.CHEF);
-            if (chefCount > 2) {
-                throw new AccessDenied("You can save only 2 chef");
-            }
-
             if (age < 25 || age > 45) {
                 user.setDateOfBirth(request.getDateOfBirth());
                 throw new InvalidAgeException("Waiter age must be between 18 and 30 !");
             }
-            if(request.getExperience() < 2) {
+            if (request.getExperience() < 2) {
                 throw new InvalidExperience("The chef must have more than 2 years of experience");
             }
             user.setExperience(request.getExperience());
@@ -100,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationServcie {
         log.info("Successfully saved user with id: " + user.getId());
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
-                .message("Successfully saved user with id: " + user.getId())
+                .message("Successfully sand your resume!")
                 .build();
 
     }

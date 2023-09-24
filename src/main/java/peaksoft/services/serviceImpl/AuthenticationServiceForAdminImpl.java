@@ -4,21 +4,16 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import peaksoft.config.JwtService;
 import peaksoft.dto.simple.SimpleResponse;
-import peaksoft.dto.user.SignInRequest;
 import peaksoft.dto.user.SignUpRequest;
-import peaksoft.dto.user.UserResponseWithToken;
 import peaksoft.entities.Restaurant;
 import peaksoft.entities.User;
 import peaksoft.enums.Role;
 import peaksoft.exceptions.*;
 import peaksoft.repository.RestaurantRepository;
 import peaksoft.repository.UserRepository;
-import peaksoft.services.AuthenticationServcie;
 import peaksoft.services.AuthenticationServcieForAdmin;
 
 import java.time.LocalDate;
@@ -31,13 +26,16 @@ public class AuthenticationServiceForAdminImpl implements AuthenticationServcieF
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
-    private final JwtService jwtService;
-    private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public SimpleResponse signUp(SignUpRequest request,Long restaurantId) {
+    public SimpleResponse signUpUserWithAdmin(SignUpRequest request,Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(()-> new NotFoundException("Restaurant with id:"+restaurantId+" not found..."));
+
+        User userEmail = userRepository.findByEmail(request.getEmail());
+        if(userEmail != null){
+            throw new AlreadyExists("User with email:"+request.getEmail()+" already exist");
+        }
 
         User user = convertRequestToUser(request);
         user.setFirstName(request.getFirstName());
@@ -47,10 +45,6 @@ public class AuthenticationServiceForAdminImpl implements AuthenticationServcieF
 
         int age = Period.between(dob, currentDate).getYears();
         if (request.getRole().equals(Role.WAITER)) {
-            Long waiterCount = userRepository.chefCount(Role.WAITER);
-            if (waiterCount > 13) {
-                throw new AccessDenied("You can save only 13 chef");
-            }
             if (age < 18 ||age > 30) {
                 user.setDateOfBirth(request.getDateOfBirth());
                 throw new InvalidAgeException("Waiter age must be between 18 and 30 !");
@@ -63,10 +57,11 @@ public class AuthenticationServiceForAdminImpl implements AuthenticationServcieF
             }
             if (Role.WAITER.equals(request.getRole())) {
                 user.setRole(Role.WAITER);
-                user.setRestaurant(restaurant);
+                int numberOfEmployees = restaurantRepository.countEmployees(restaurantId);
+                restaurant.setNumberOfEmployees(numberOfEmployees);
                 restaurant.getUsers().add(user);
+                user.setRestaurant(restaurant);
                 restaurantRepository.save(restaurant);
-                userRepository.save(user);
             } else {
                 throw new AccessDenied("You have not permission signUp in this restaurant");
             }
@@ -75,11 +70,6 @@ public class AuthenticationServiceForAdminImpl implements AuthenticationServcieF
 
 
         } else if (Role.CHEF.equals(request.getRole())) {
-            Long chefCount = userRepository.chefCount(Role.CHEF);
-            if (chefCount > 2) {
-                throw new AccessDenied("You can save only 2 chef");
-            }
-
             if (age < 25 || age > 45) {
                 user.setDateOfBirth(request.getDateOfBirth());
                 throw new InvalidAgeException("Waiter age must be between 18 and 30 !");

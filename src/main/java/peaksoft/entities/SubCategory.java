@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -18,8 +20,8 @@ public class SubCategory {
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    @ManyToOne
-    private MenuItem menu;
+    @OneToMany
+    private List<MenuItem> menus;
     @ManyToOne
     private Category category;
 

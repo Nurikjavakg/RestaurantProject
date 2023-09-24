@@ -9,7 +9,7 @@ public interface RestaurantService {
     SimpleResponse assignUserToRestaurant(Long userId, Long restaurantId);
     RestaurantResponse getRestaurantById(Long restaurantId);
 
-    SimpleResponse updateProduct(Long restaurantId, RestaurantRequest restaurantRequest);
-    SimpleResponse deleteProduct(Long restaurantId);
+    SimpleResponse updateRestaurant(Long restaurantId, RestaurantRequest restaurantRequest);
+    SimpleResponse deleteRestaurant(Long restaurantId);
 
 }

@@ -20,7 +20,7 @@ public class Category {
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE})
     private List<SubCategory>subCategories;
 
 
