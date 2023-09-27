@@ -21,11 +21,11 @@ import java.util.List;
 public class MenuItemApi {
     private final MenuItemService menuItemService;
     private final MenuItemJDBCTemplateImpl menuItemJDBCTemplate;
-    @PostMapping("/saveMenuItem/{restaurantId}")
+    @PostMapping("/saveMenuItem/{restaurantId}/{subCategoryId}")
     @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
     @Operation(summary = "Save category",description = "")
-    public SimpleResponse saveMenuItem(@PathVariable Long restaurantId, @RequestBody MenuItemRequest menuItemRequest){
-        menuItemService.saveMenuItem(restaurantId,menuItemRequest);
+    public SimpleResponse saveMenuItem(@PathVariable Long restaurantId, @PathVariable Long subCategoryId, @RequestBody MenuItemRequest menuItemRequest){
+        menuItemService.saveMenuItem(restaurantId,subCategoryId,menuItemRequest);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("Menu with name: %s successfully saved!",menuItemRequest.getName()))
@@ -71,11 +71,11 @@ public class MenuItemApi {
                 .message(String.format("Menu with name: %s successfully updated!", menuItemRequest.getName()))
                 .build();
     }
-    @DeleteMapping("/{menuId}/{subCategoryId}")
+    @DeleteMapping("/{menuId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Delete menu by id",description = "")
-    public SimpleResponse deleteMenu(@PathVariable Long menuId,@PathVariable Long subCategoryId){
-        menuItemService.deleteMenuItem(menuId,subCategoryId);
+    public SimpleResponse deleteMenu(@PathVariable Long menuId){
+        menuItemService.deleteMenuItem(menuId);
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message("Menu with id:"+menuId+" is deleted...")

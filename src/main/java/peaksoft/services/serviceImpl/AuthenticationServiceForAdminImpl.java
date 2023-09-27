@@ -58,7 +58,7 @@ public class AuthenticationServiceForAdminImpl implements AuthenticationServcieF
             if (Role.WAITER.equals(request.getRole())) {
                 user.setRole(Role.WAITER);
                 int numberOfEmployees = restaurantRepository.countEmployees(restaurantId);
-                restaurant.setNumberOfEmployees(numberOfEmployees);
+                restaurant.setNumberOfEmployees(numberOfEmployees+1);
                 restaurant.getUsers().add(user);
                 user.setRestaurant(restaurant);
                 restaurantRepository.save(restaurant);

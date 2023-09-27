@@ -20,7 +20,7 @@ public class SubCategory {
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    @OneToMany
+    @OneToMany(mappedBy = "subCategory", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE})
     private List<MenuItem> menus;
     @ManyToOne
     private Category category;

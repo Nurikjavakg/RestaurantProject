@@ -8,8 +8,8 @@ import peaksoft.dto.simple.SimpleResponse;
 import java.util.List;
 
 public interface MenuItemService {
-    SimpleResponse saveMenuItem(Long restaurantId, MenuItemRequest menuItemRequest);
+    SimpleResponse saveMenuItem(Long restaurantId, Long subCategoryId, MenuItemRequest menuItemRequest);
     SimpleResponse assignMenuItemToSubCategory(Long subCategoryId, Long menuItemId);
     SimpleResponse updateMenuItemById(Long menuItemId, MenuItemRequest menuItemRequest);
-    SimpleResponse deleteMenuItem(Long menuItemId,Long subCategoryId);
+    SimpleResponse deleteMenuItem(Long menuItemId);
 }

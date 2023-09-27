@@ -37,7 +37,7 @@ public class MenuItemJDBCTemplateImpl implements MenuItemJDBCTemplate {
                  m.description as description,
                  m.is_vegetarian as is_vegetarian
                  from menu m 
-                 where m.name like ? || '%'
+                 where m.name ilike ? || '%'
                 """;
         return jdbcTemplate.query(sql, new Object[]{alphabet}, (rs, rowNum) ->
                 new MenuItemResponse(

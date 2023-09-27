@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface
 
+
 RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     @Query("SELECT COUNT(u.id) AS employeeCount FROM Restaurant r join r.users u where r.id =?1")

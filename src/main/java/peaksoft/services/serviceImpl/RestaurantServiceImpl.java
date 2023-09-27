@@ -55,7 +55,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(()-> new NotFoundException("Restaurant with id:"+restaurantId+" not found..."));
         int numberOfEmployees = restaurantRepository.countEmployees(restaurantId);
-        restaurant.setNumberOfEmployees(numberOfEmployees);
+        restaurant.setNumberOfEmployees(numberOfEmployees+1);
         restaurant.getUsers().add(user);
         user.setRestaurant(restaurant);
         restaurantRepository.save(restaurant);

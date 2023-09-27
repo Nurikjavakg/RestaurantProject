@@ -27,7 +27,7 @@ public class MenuItem {
     private BigDecimal price;
     private String description;
     private Boolean isVegetarian;
-    @ManyToOne
+    @ManyToOne (cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Restaurant restaurant;
     @ManyToMany(mappedBy = "menus",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE})
     private List<Cheque> chequeList;

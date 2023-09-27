@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import peaksoft.enums.Role;
+import peaksoft.validation.PasswordValidatian;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     private String lastName;
     private LocalDate dateOfBirth;
     private String email;
+    @PasswordValidatian
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;

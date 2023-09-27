@@ -33,8 +33,8 @@ public class AuthenticationServiceForUserImpl implements AuthenticationServiceFo
 
     @Override
     public SimpleResponse signUp(SignUpRequest request) {
-        Restaurant restaurant = restaurantRepository.findRestaurantById(2L).orElse(null);
-        if (restaurant.getNumberOfEmployees() == 4)
+        Restaurant restaurant = restaurantRepository.findRestaurantById(1L).orElse(null);
+        if (restaurant.getNumberOfEmployees() == 15)
             throw new NotVacanciesException("Unfortunately we have not vacancies!");
 
         User userEmail = userRepository.findByEmail(request.getEmail());
@@ -46,6 +46,7 @@ public class AuthenticationServiceForUserImpl implements AuthenticationServiceFo
         user.setLastName(request.getLastName());
         LocalDate currentDate = LocalDate.now();
         LocalDate dob = request.getDateOfBirth();
+        user.setDateOfBirth(request.getDateOfBirth());
 
         int age = Period.between(dob, currentDate).getYears();
         if (request.getRole().equals(Role.WAITER)) {

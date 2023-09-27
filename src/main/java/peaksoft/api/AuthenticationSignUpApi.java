@@ -2,6 +2,7 @@ package peaksoft.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +20,12 @@ public class AuthenticationSignUpApi {
 
     @PostMapping
     @Operation(summary = "Send resume to restaurant",description = "")
-    public ResponseEntity<SimpleResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
-        return ResponseEntity.ok(authenticationService.signUp(signUpRequest));
+    public SimpleResponse signUp(@RequestBody SignUpRequest signUpRequest) {
+        authenticationService.signUp(signUpRequest);
+        return SimpleResponse.builder()
+                .httpStatus(HttpStatus.OK)
+                .message("User is successfully saved...")
+                .build();
 
     }
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,6 +28,16 @@ public class Cheque {
     @ManyToOne
     private User user;
     @ManyToMany
-    private List<MenuItem> menus;
+    private List<MenuItem> menus = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = ZonedDateTime.now();
+
+    }
+    @PreUpdate
+    public void preUpdate(){
+        this.updatedAt = ZonedDateTime.now();
+    }
 
 }
