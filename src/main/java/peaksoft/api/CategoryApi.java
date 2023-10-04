@@ -47,9 +47,11 @@ public class CategoryApi {
     @Operation(summary = "Delete restaurant by id",description = "")
     public SimpleResponse deleteCategoryById(@PathVariable Long categoryId){
         categoryService.deleteCategory(categoryId);
+        System.out.println("new file");
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message("Category with id:"+categoryId+" is deleted...")
                 .build();
+
     }
 }
