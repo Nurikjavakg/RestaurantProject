@@ -49,6 +49,8 @@ public class CategoryApi {
         categoryService.deleteCategory(categoryId);
         System.out.println("new file");
         System.out.println("new status");
+        System.out.println("sout");
+        System.out.println("aike");
 
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
